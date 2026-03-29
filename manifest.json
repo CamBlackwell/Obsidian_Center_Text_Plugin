@@ -1,10 +1,10 @@
 {
 	"id": "center-text",
 	"name": "Center Text",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Center all text in your notes with adjustable width",
+	"description": "Center all text in your notes with adjustable width.",
 	"author": "Cameron Blackwell",
-	"authorUrl": "https://github.com/CamBlackwell/Obsidian_Center_Text_Plugin",
+	"authorUrl": "https://github.com/CamBlackwell",
 	"isDesktopOnly": true
 }
