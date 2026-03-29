@@ -70,7 +70,7 @@ export default class CenterTextPlugin extends Plugin {
 
 	updateRibbonIcon(iconEl: HTMLElement) {
 		iconEl.toggleClass("is-active", this.settings.centerEnabled);
-		iconEl.setAttribute("aria-label", this.settings.centerEnabled ? "Centering is on" : "Centering is off");
+		iconEl.setAttribute("aria-label", this.settings.centerEnabled ? "Center text on" : "Center text off");
 	}
 
 	async loadSettings() {
