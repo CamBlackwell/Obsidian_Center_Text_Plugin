@@ -96,7 +96,7 @@ class CenterTextSettingsTab extends PluginSettingTab {
 
 		// replaces createEl("h2") which the linter disallows
 		new Setting(containerEl)
-			.setName("Center text settings")
+			.setName("General")
 			.setHeading();
 
 		new Setting(containerEl)
