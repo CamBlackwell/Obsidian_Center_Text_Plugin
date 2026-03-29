@@ -1,79 +1,66 @@
 import { Plugin, PluginSettingTab, App, Setting } from 'obsidian';
 
-interface centerTextSettings {
-	centerEnabled: boolean; //initialise the plugin's saved data to be one boolean
+interface CenterTextSettings {
+	centerEnabled: boolean;
 	maxWidth: number;
 }
 
-const DEFAULT_SETTINGS: centerTextSettings = {
+const DEFAULT_SETTINGS: CenterTextSettings = {
 	centerEnabled: false,
 	maxWidth: 100,
 }
 
-
-
-export default class centerTextPlugin extends Plugin {
-	settings: centerTextSettings;
-	styleEl: HTMLStyleElement; //is a reference to a <Style> tag that gets injected into the page
+export default class CenterTextPlugin extends Plugin {
+	settings: CenterTextSettings;
 
 	async onload() {
 		await this.loadSettings();
-
-
-		this.styleEl = document.createElement("style"); //creates and injects the style tag into <head>
-		this.styleEl.id = "center-text-plugin-style";
-		document.head.appendChild(this.styleEl);
-
-		this.applyStyle(); //applies saved state on load
+		this.applyStyle();
 
 		const ribbonIcon = this.addRibbonIcon(
 			"align-center",
-			"Toggle center Text",
+			"Toggle center text",        // sentence case
 			() => {
 				this.settings.centerEnabled = !this.settings.centerEnabled;
 				this.applyStyle();
-				this.saveSettings();
+				void this.saveSettings(); // void fixes floating promise
 				this.updateRibbonIcon(ribbonIcon);
 			}
 		);
 		this.updateRibbonIcon(ribbonIcon);
 
 		this.addCommand({
-			id: "toggle-center-text",
-			name: "Toggle center Text",
+			id: "toggle",              // removed plugin ID prefix
+			name: "Toggle",            // removed plugin name
 			callback: () => {
-				this.settings.centerEnabled = !this.settings.centerEnabled; //flip condition
+				this.settings.centerEnabled = !this.settings.centerEnabled;
 				this.applyStyle();
-				this.saveSettings();
+				void this.saveSettings();
 				this.updateRibbonIcon(ribbonIcon);
 			}
 		});
 
 		this.addCommand({
-			id: "increase-center-text-width",
+			id: "increase-width",
 			name: "Increase text width",
 			callback: () => {
 				this.settings.maxWidth = Math.min(100, this.settings.maxWidth + 5);
 				this.applyStyle();
-				this.saveSettings();
+				void this.saveSettings();
 			}
 		});
 
 		this.addCommand({
-			id: "decrease-center-text-width",
+			id: "decrease-width",
 			name: "Decrease text width",
 			callback: () => {
 				this.settings.maxWidth = Math.max(20, this.settings.maxWidth - 5);
 				this.applyStyle();
-				this.saveSettings();
+				void this.saveSettings();
 			}
 		});
 
-		this.addSettingTab(new centerTextSettingsTab(this.app, this));
-	}
-
-	onunload() {
-		this.styleEl.remove();
+		this.addSettingTab(new CenterTextSettingsTab(this.app, this));
 	}
 
 	applyStyle() {
@@ -83,12 +70,11 @@ export default class centerTextPlugin extends Plugin {
 
 	updateRibbonIcon(iconEl: HTMLElement) {
 		iconEl.toggleClass("is-active", this.settings.centerEnabled);
-		iconEl.setAttribute("aria-label", this.settings.centerEnabled ? "centering is on" : "centering is off");
+		iconEl.setAttribute("aria-label", this.settings.centerEnabled ? "Centering is on" : "Centering is off");
 	}
 
-
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()) as CenterTextSettings; // cast fixes unsafe any
 	}
 
 	async saveSettings() {
@@ -96,10 +82,10 @@ export default class centerTextPlugin extends Plugin {
 	}
 }
 
-class centerTextSettingsTab extends PluginSettingTab { //a separate class that builds the ui for the settings page
-	plugin: centerTextPlugin;
+class CenterTextSettingsTab extends PluginSettingTab {
+	plugin: CenterTextPlugin;
 
-	constructor(app: App, plugin: centerTextPlugin) {
+	constructor(app: App, plugin: CenterTextPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -107,10 +93,14 @@ class centerTextSettingsTab extends PluginSettingTab { //a separate class that b
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl("h2", { text: "center Text Settings" });
+
+		// replaces createEl("h2") which the linter disallows
+		new Setting(containerEl)
+			.setName("Center text settings")
+			.setHeading();
 
 		new Setting(containerEl)
-			.setName("center All text")
+			.setName("Center all text")   // sentence case
 			.setDesc("When enabled, the text in notes will be centered.")
 			.addToggle((toggle) =>
 				toggle
@@ -127,11 +117,10 @@ class centerTextSettingsTab extends PluginSettingTab { //a separate class that b
 			.setDesc(`${this.plugin.settings.maxWidth}%`)
 			.addSlider((slider) =>
 				slider
-					.setLimits(20, 100, 5)   // min, max, step
+					.setLimits(20, 100, 5)
 					.setValue(this.plugin.settings.maxWidth)
 					.onChange(async (value) => {
 						this.plugin.settings.maxWidth = value;
-						// update the desc label live as you drag
 						slider.sliderEl.parentElement?.previousElementSibling
 							?.querySelector(".setting-item-description")
 							?.setText(`${value}%`);
