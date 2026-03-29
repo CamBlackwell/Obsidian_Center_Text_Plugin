@@ -94,11 +94,6 @@ class CenterTextSettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		// replaces createEl("h2") which the linter disallows
-		new Setting(containerEl)
-			.setName("General")
-			.setHeading();
-
 		new Setting(containerEl)
 			.setName("Center all text")   // sentence case
 			.setDesc("When enabled, the text in notes will be centered.")
