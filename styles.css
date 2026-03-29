@@ -1,6 +1,6 @@
 /* Reading view - constrain the whole content container */
 .center-text-enabled .markdown-reading-view .markdown-preview-section {
-  max-width: var(--center-text-max-width);
+  max-width: var(--center-text-max-width) !important;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -8,7 +8,7 @@
 
 /* Live preview / source mode - constrain the editor content */
 .center-text-enabled .cm-editor .cm-content {
-  max-width: var(--center-text-max-width);
+  max-width: var(--center-text-max-width) !important;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
